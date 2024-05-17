@@ -1,11 +1,20 @@
-// server.js
+const https = require('https');
+const fs = require('fs');
 const WebSocket = require('ws');
+const url = require('url');
 
-const wss = new WebSocket.Server({ port: 3000 });
+// Load SSL certificates
+const server = https.createServer({
+  cert: fs.readFileSync('/etc/letsencrypt/live/hwg.saikh.com/fullchain.pem'),
+  key: fs.readFileSync('/etc/letsencrypt/live/hwg.saikh.com/privkey.pem')
+});
+
+// Create WebSocket server using the HTTPS server
+const wss = new WebSocket.Server({ server });
 const clients = new Map(); // Map to store WebSocket connections associated with user IDs
 
 wss.on('connection', function connection(ws, req) {
-  const urlParams = new URLSearchParams(req.url.split('?')[1]);
+  const urlParams = new URLSearchParams(url.parse(req.url).query);
   const currentUser = urlParams.get('current_user');
 
   console.log(`User ${currentUser} connected`);
@@ -32,4 +41,9 @@ wss.on('connection', function connection(ws, req) {
     console.log(`User ${currentUser} disconnected`);
     clients.delete(currentUser);
   });
+});
+
+// Start the HTTPS server
+server.listen(3000, function() {
+  console.log('Server is listening on port 3000');
 });

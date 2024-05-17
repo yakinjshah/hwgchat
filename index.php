@@ -21,7 +21,7 @@
       //const decodedToken = JSON.parse(atob(token.split('.')[1]));
       const currentUser = <?php echo $_GET['me']; ?>; //decodedToken.userId
 
-      const socket = new WebSocket(`ws://165.22.220.136:3000?current_user=${currentUser}`);
+      const socket = new WebSocket(`ws://hwg.saikh.com:3000?current_user=${currentUser}`);
 
       const messagesElement = document.getElementById('messages');
       const messageInput = document.getElementById('messageInput');
